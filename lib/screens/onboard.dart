@@ -2,6 +2,7 @@ import 'package:digitalk/screens/auth/login.dart';
 import 'package:digitalk/screens/auth/register.dart';
 import 'package:digitalk/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Onboard extends StatelessWidget {
   const Onboard({Key? key}) : super(key: key);
@@ -23,11 +24,11 @@ class Onboard extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              CustomButton(text: "Log In", onTap: () => Login()),
+              CustomButton(text: "Log In", onTap: () =>Get.to(()=> Login())),
               SizedBox(
                 height: 20,
               ),
-              CustomButton(text: "Sign Up", onTap: () => Register())
+              CustomButton(text: "Sign Up", onTap: () =>Get.to(()=> Register()))
             ],
           ),
         ),
