@@ -1,4 +1,5 @@
 import 'package:digitalk/bindings.dart';
+import 'package:digitalk/controller/auth_controller.dart';
 import 'package:digitalk/screens/onboard.dart';
 import 'package:digitalk/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +11,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
-
-  // This widget is the root of your application.
+  AuthController authController=Get.put<AuthController>(AuthController());
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
