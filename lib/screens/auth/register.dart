@@ -7,55 +7,87 @@ import 'package:get/get.dart';
 class Register extends StatelessWidget {
   Register({Key? key}) : super(key: key);
   AuthController _authController = Get.find<AuthController>();
+  final _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      
       appBar: AppBar(
         titleSpacing: 0.0,
         title: Text("Sign Up"),
-        leading: IconButton(onPressed: ()=>Get.back(), icon: Icon(Icons.arrow_back_ios,color: Colors.black,)),
+        leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: size.height * 0.1,
+      body: Obx(() => SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Form(
+                key: _key,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.1,
+                    ),
+                    Text(
+                      "Email",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    CustomTextField(
+                        controller: _authController.textEditingControllerEmail, type: "email",),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Username",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    CustomTextField(
+                        controller:
+                            _authController.textEditingControllerUsername, type: "username",),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Password",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 3,
+                    ),
+                    CustomTextField(
+                        controller:
+                            _authController.textEditingControllerPassword, type: "password",),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _authController.creatingUser.value
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : CustomButton(
+                            text: "Sign Up",
+                            onTap: () {
+                              if (_key.currentState!.validate()) {
+                                _authController.createUser(context: context);
+                              }
+                            }),
+                  ],
+                ),
               ),
-              Text(
-                "Email",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 3,),
-              CustomTextField(
-                  controller: _authController.textEditingControllerEmail),
-              SizedBox(height: 20,),
-              Text(
-                "Username",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 3,),
-              CustomTextField(
-                  controller: _authController.textEditingControllerUsername),
-              SizedBox(height: 20,),
-              Text(
-                "Password",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 3,),
-              CustomTextField(
-                  controller: _authController.textEditingControllerPassword),
-              SizedBox(height: 20,),
-              CustomButton(text: "Sign Up", onTap: (){}),
-            ],
-          ),
-        ),
-      ),
+            ),
+          )),
     );
   }
 }
