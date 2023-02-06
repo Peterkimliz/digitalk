@@ -39,7 +39,7 @@ class Login extends StatelessWidget {
                 height: 3,
               ),
               CustomTextField(
-                  controller: _authController.textEditingControllerEmail),
+                  controller: _authController.textEditingControllerEmail, type: "email",),
               SizedBox(
                 height: 20,
               ),
@@ -51,7 +51,7 @@ class Login extends StatelessWidget {
                 height: 3,
               ),
               CustomTextField(
-                  controller: _authController.textEditingControllerPassword),
+                  controller: _authController.textEditingControllerPassword, type: "password",),
               SizedBox(
                 height: 20,
               ),
