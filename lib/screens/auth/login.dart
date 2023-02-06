@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 class Login extends StatelessWidget {
   Login({Key? key}) : super(key: key);
   AuthController _authController = Get.find<AuthController>();
+  final _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,38 +26,55 @@ class Login extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: size.height * 0.1,
-              ),
-              Text(
-                "Email",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              CustomTextField(
-                  controller: _authController.textEditingControllerEmail, type: "email",),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "Password",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              CustomTextField(
-                  controller: _authController.textEditingControllerPassword, type: "password",),
-              SizedBox(
-                height: 20,
-              ),
-              CustomButton(text: "Log In", onTap: () {}),
-            ],
+          child: Form(
+            key: _key,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: size.height * 0.1,
+                ),
+                Text(
+                  "Email",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                CustomTextField(
+                  controller: _authController.textEditingControllerEmail,
+                  type: "email",
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Password",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                CustomTextField(
+                  controller: _authController.textEditingControllerPassword,
+                  type: "password",
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Obx(() => _authController.creatingUser.value
+                    ? Center(
+                  child: CircularProgressIndicator(),
+                )
+                    : CustomButton(
+                    text: "Log In",
+                    onTap: () {
+                      if (_key.currentState!.validate()) {
+                        _authController.loginUser(context: context);
+                      }
+                    })),
+              ],
+            ),
           ),
         ),
       ),
