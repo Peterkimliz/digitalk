@@ -40,11 +40,11 @@ class RoomController extends GetxController {
       if (textEditingControllerTitle.text.isEmpty || image == null) {
         showSnackBar(context, "Please enter all fields");
       } else {
-        if (!(await _firebaseFirestore
+        if (!((await _firebaseFirestore
                 .collection("liveStream")
-                .doc(_firebaseAuth.currentUser!.uid)
+                .doc("${authController.currentUser.value!.uid!}${authController.currentUser.value!.username!}")
                 .get())
-            .exists) {
+            .exists)) {
           String downloadUrl = await _functions.uploadImage(
               childName: "livestreamThumbnails",
               image: image!,
