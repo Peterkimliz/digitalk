@@ -95,7 +95,9 @@ class GoLive extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0),
-            child: CustomButton(text: "Go live", onTap: () {}),
+            child: CustomButton(text: "Go live", onTap: () {
+              roomController.startLiveStream(context: context);
+            }),
           )
         ],
       ),
