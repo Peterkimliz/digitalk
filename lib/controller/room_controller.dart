@@ -8,7 +8,7 @@ class RoomController extends GetxController{
   TextEditingController textEditingControllerTitle=TextEditingController();
 
   File? image;
-  String ?imagePath;
+  RxString imagePath=RxString("");
   final _picker = ImagePicker();
 
   Future<void> getImage() async {
@@ -16,7 +16,7 @@ class RoomController extends GetxController{
 
     if (pickedFile != null) {
       image = File(pickedFile.path);
-      imagePath = pickedFile.path;
+      imagePath.value = pickedFile.path;
       print(imagePath);
       update();
     } else {
