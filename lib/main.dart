@@ -1,5 +1,7 @@
 import 'package:digitalk/bindings.dart';
 import 'package:digitalk/controller/auth_controller.dart';
+import 'package:digitalk/controller/home_controller.dart';
+import 'package:digitalk/controller/room_controller.dart';
 import 'package:digitalk/models/user.dart' as model;
 import 'package:digitalk/screens/home_screen.dart';
 import 'package:digitalk/screens/onboard.dart';
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   AuthController authController = Get.put<AuthController>(AuthController());
+  HomeController homeController = Get.put<HomeController>(HomeController());
+  RoomController roomController = Get.put<RoomController>(RoomController());
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +59,6 @@ class MyApp extends StatelessWidget {
               }
               if (snapshop.hasData) {
                 return HomeScreen();
-
               }
               return Onboard();
             }));
