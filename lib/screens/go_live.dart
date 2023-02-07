@@ -12,9 +12,7 @@ import 'package:get/get.dart';
 
 class GoLive extends StatelessWidget {
   GoLive({Key? key}) : super(key: key);
-
-  HomeController homeController = Get.find<HomeController>();
-  RoomController roomController = Get.find<RoomController>();
+  RoomController roomController = Get.put<RoomController>(RoomController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +78,7 @@ class GoLive extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: CustomTextField(
-                        controller: homeController.textEditingControllerTitle,
+                        controller: roomController.textEditingControllerTitle,
                         type: "text"),
                   )
                 ],
