@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/broadCastScreen.dart';
+
 class GoLive extends StatelessWidget {
   GoLive({Key? key}) : super(key: key);
   RoomController roomController = Get.put<RoomController>(RoomController());
@@ -70,7 +72,10 @@ class GoLive extends StatelessWidget {
                     : SizedBox(
                         height: 200,
                         width: double.infinity,
-                        child: Image.file(roomController.image!,fit: BoxFit.cover,),
+                        child: Image.file(
+                          roomController.image!,
+                          fit: BoxFit.cover,
+                        ),
                       );
               }),
               SizedBox(
@@ -95,7 +100,18 @@ class GoLive extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0),
-            child: CustomButton(text: "Go live", onTap: () {}),
+            child: CustomButton(
+                text: "Go live",
+                onTap: () async {
+                  String channelId =
+                      await roomController.startLiveStream(context: context);
+                  if (channelId.isNotEmpty) {
+                    Get.to(() => BroadCastScreen(
+                          channelId: channelId,
+                          isBroadCaster: true,
+                        ));
+                  }
+                }),
           )
         ],
       ),
