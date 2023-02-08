@@ -1,7 +1,13 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:digitalk/controller/auth_controller.dart';
+import 'package:digitalk/controller/room_controller.dart';
+import 'package:digitalk/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/const.dart';
@@ -21,6 +27,8 @@ class BroadCastScreen extends StatefulWidget {
 class _BroadCastScreenState extends State<BroadCastScreen> {
   late RtcEngine _engine;
   List<int> remoteUid = [];
+  AuthController authController = Get.find<AuthController>();
+  RoomController roomController = Get.find<RoomController>();
 
   @override
   void initState() {
@@ -30,7 +38,22 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return WillPopScope(
+      onWillPop: () async {
+        await _leaveChamnnel();
+        return Future.value(true);
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _renderVideo(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void initEngine() async {
@@ -75,5 +98,35 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
     }
     await _engine.joinChannelWithUserAccount(
         token, "trial", FirebaseAuth.instance.currentUser!.uid);
+  }
+
+  _leaveChamnnel() async {
+    await _engine.leaveChannel();
+    if ("${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
+        widget.channelId) {
+      await roomController.endLiveStream(widget.channelId);
+    } else {
+      await roomController.updateViewCount(widget.channelId, false);
+    }
+    Get.off(() => HomeScreen());
+  }
+
+  _renderVideo() {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child:
+          "${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
+                  widget.channelId
+              ? RtcLocalView.SurfaceView(
+                  zOrderMediaOverlay: true,
+                  zOrderOnTop: true,
+                )
+              : remoteUid.isNotEmpty
+                  ? RtcRemoteView.TextureView(
+                      channelId: widget.channelId,
+                      uid: remoteUid[0],
+                    )
+                  : Container(),
+    );
   }
 }
