@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../widgets/loading_widget.dart';
+
 class RoomController extends GetxController {
+  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   TextEditingController textEditingControllerTitle = TextEditingController();
   Functions _functions = Functions();
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -40,11 +43,14 @@ class RoomController extends GetxController {
       if (textEditingControllerTitle.text.isEmpty || image == null) {
         showSnackBar(context, "Please enter all fields");
       } else {
+        LoadingDialog.showLoadingDialog(
+          context: context, title: "Creating Liveshow", key: _keyLoader);
         if (!((await _firebaseFirestore
                 .collection("liveStream")
                 .doc("${authController.currentUser.value!.uid!}${authController.currentUser.value!.username!}")
                 .get())
             .exists)) {
+
           String downloadUrl = await _functions.uploadImage(
               childName: "livestreamThumbnails",
               image: image!,
@@ -64,15 +70,26 @@ class RoomController extends GetxController {
               .collection("liveStream")
               .doc(channelId)
               .set(livestream.toJson());
+
+          Navigator.of(_keyLoader.currentContext!, rootNavigator: true).pop();
+          clearInputs();
         } else {
+          Navigator.of(_keyLoader.currentContext!, rootNavigator: true).pop();
           showSnackBar(
               context, "two livestreams cannot start at the same time");
         }
       }
     } on FirebaseException catch (e) {
+      Navigator.of(_keyLoader.currentContext!, rootNavigator: true).pop();
       showSnackBar(context, e.message.toString());
       print(e);
     }
     return channelId;
   }
+
+   clearInputs() {
+    textEditingControllerTitle.clear();
+    image=null;
+    imagePath.value="";
+   }
 }

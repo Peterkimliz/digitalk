@@ -74,6 +74,6 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
       await [Permission.microphone, Permission.camera].request();
     }
     await _engine.joinChannelWithUserAccount(
-        "token", widget.channelId, FirebaseAuth.instance.currentUser!.uid);
+        token, "trial", FirebaseAuth.instance.currentUser!.uid);
   }
 }
