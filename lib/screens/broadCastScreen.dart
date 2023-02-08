@@ -52,7 +52,7 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: _renderVideo(),
               ),
               if ("${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
@@ -86,7 +86,7 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
               SizedBox(
                 height: 10,
               ),
-              Expanded(child: Chat(channelId: widget.channelId))
+              // Expanded(child: Chat(channelId: widget.channelId))
             ],
           ),
         ),
