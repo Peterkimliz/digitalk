@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../models/broadCastScreen.dart';
+import 'broadCastScreen.dart';
 
 class GoLive extends StatelessWidget {
   GoLive({Key? key}) : super(key: key);

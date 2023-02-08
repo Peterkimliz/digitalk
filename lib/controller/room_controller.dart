@@ -44,13 +44,13 @@ class RoomController extends GetxController {
         showSnackBar(context, "Please enter all fields");
       } else {
         LoadingDialog.showLoadingDialog(
-          context: context, title: "Creating Liveshow", key: _keyLoader);
+            context: context, title: "Creating Liveshow", key: _keyLoader);
         if (!((await _firebaseFirestore
                 .collection("liveStream")
-                .doc("${authController.currentUser.value!.uid!}${authController.currentUser.value!.username!}")
+                .doc(
+                    "${authController.currentUser.value!.uid!}${authController.currentUser.value!.username!}")
                 .get())
             .exists)) {
-
           String downloadUrl = await _functions.uploadImage(
               childName: "livestreamThumbnails",
               image: image!,
@@ -87,9 +87,28 @@ class RoomController extends GetxController {
     return channelId;
   }
 
-   clearInputs() {
+  Future<void> endLiveStream(String channelId) async {
+    try {
+      await _firebaseFirestore.collection("liveStream").doc(channelId).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  updateViewCount(String id, bool isIncreased) async {
+    try {
+      await _firebaseFirestore
+          .collection("liveStream")
+          .doc(id)
+          .update({"viewers": FieldValue.increment(isIncreased ? 1 : -1)});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  clearInputs() {
     textEditingControllerTitle.clear();
-    image=null;
-    imagePath.value="";
-   }
+    image = null;
+    imagePath.value = "";
+  }
 }
