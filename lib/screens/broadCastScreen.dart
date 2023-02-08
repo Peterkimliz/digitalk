@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/const.dart';
+import 'chat.dart';
 
 class BroadCastScreen extends StatefulWidget {
   final isBroadCaster;
@@ -29,6 +30,8 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   List<int> remoteUid = [];
   AuthController authController = Get.find<AuthController>();
   RoomController roomController = Get.find<RoomController>();
+  bool switchedCamera = false;
+  bool isMuted = false;
 
   @override
   void initState() {
@@ -48,7 +51,42 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _renderVideo(),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: _renderVideo(),
+              ),
+              if ("${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
+                  widget.channelId)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          _switchCamera();
+                        },
+                        icon: Icon(Icons.camera_alt)),
+                    IconButton(
+                        onPressed: () {
+                          _muteMic();
+                        },
+                        icon: Icon(
+                          isMuted ? Icons.mic_off : Icons.mic,
+                          color: isMuted ? Colors.red : Colors.green,
+                        )),
+                    IconButton(
+                        onPressed: () {
+                          _leaveChamnnel();
+                        },
+                        icon: Icon(
+                          Icons.call,
+                          color: Colors.red,
+                        ))
+                  ],
+                ),
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(child: Chat(channelId: widget.channelId))
             ],
           ),
         ),
@@ -128,5 +166,20 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
                     )
                   : Container(),
     );
+  }
+
+  void _switchCamera() {
+    _engine.switchCamera().then((value) {
+      setState(() {
+        switchedCamera = !switchedCamera;
+      });
+    });
+  }
+
+  void _muteMic() async {
+    setState(() {
+      isMuted = !isMuted;
+    });
+    await _engine.muteLocalAudioStream(isMuted);
   }
 }
