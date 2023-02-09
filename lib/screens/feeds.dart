@@ -8,7 +8,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class FeedsScreen extends StatelessWidget {
   FeedsScreen({Key? key}) : super(key: key);
-  RoomController roomController = Get.find<RoomController>();
+  RoomController roomController = Get.put(RoomController());
 
   @override
   Widget build(BuildContext context) {
