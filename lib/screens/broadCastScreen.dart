@@ -127,8 +127,7 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   _renderVideo() {
     return Container(
       height: double.infinity,
-      child:
-          "${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
+      child: "${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
                   widget.channelId
               ? RtcLocalView.SurfaceView(
                   zOrderMediaOverlay: true,
