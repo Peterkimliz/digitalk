@@ -109,12 +109,15 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   }
 
   void _addListeners() {
+    print("userJoined");
     _engine.setEventHandler(
-      RtcEngineEventHandler(joinChannelSuccess: (channel, uid, elapsed) {
+      RtcEngineEventHandler(
+          joinChannelSuccess: (channel, uid, elapsed) {
         debugPrint("joinChannelSuccess$channel,$uid,$elapsed");
       }, userJoined: (uid, elapsed) {
         debugPrint("userJoined$elapsed,$uid,");
         setState(() {
+          print("here");
           remoteUid.add(uid);
         });
       }, userOffline: (uid, reason) {
@@ -159,12 +162,11 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
                   zOrderMediaOverlay: true,
                   zOrderOnTop: true,
                 )
-              : remoteUid.isNotEmpty
-                  ? RtcRemoteView.TextureView(
+              : RtcRemoteView.TextureView(
                       channelId: widget.channelId,
                       uid: remoteUid[0],
                     )
-                  : Container(),
+                 ,
     );
   }
 
