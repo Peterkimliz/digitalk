@@ -14,15 +14,13 @@ dependencies:
   agora_rtc_engine: ^5.0.1
   cloud_firestore: ^4.3.1
   dotted_border: ^2.0.0+3
-  file_picker: ^5.2.5
+
   firebase_auth: ^4.2.5
   firebase_core: ^2.4.1
   firebase_storage: ^11.0.10
   http: ^0.13.5
   permission_handler: ^10.2.0
-  provider: ^6.0.5
   timeago: ^3.3.0
-  uuid: ^3.0.7
   get: ^4.6.5
   image_picker: ^0.8.6+1
 
