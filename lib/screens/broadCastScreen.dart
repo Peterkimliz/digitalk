@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/const.dart';
-import 'chat.dart';
 
 class BroadCastScreen extends StatefulWidget {
   final isBroadCaster;
@@ -48,45 +47,17 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: _renderVideo(),
-              ),
+              _renderVideo(),
               if ("${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
                   widget.channelId)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          _switchCamera();
-                        },
-                        icon: Icon(Icons.camera_alt)),
-                    IconButton(
-                        onPressed: () {
-                          _muteMic();
-                        },
-                        icon: Icon(
-                          isMuted ? Icons.mic_off : Icons.mic,
-                          color: isMuted ? Colors.red : Colors.green,
-                        )),
-                    IconButton(
-                        onPressed: () {
-                          _leaveChamnnel();
-                        },
-                        icon: Icon(
-                          Icons.call,
-                          color: Colors.red,
-                        ))
-                  ],
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child:_toolbar(),
                 ),
-              SizedBox(
-                height: 10,
-              ),
-              // Expanded(child: Chat(channelId: widget.channelId))
             ],
           ),
         ),
@@ -97,9 +68,13 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   void initEngine() async {
     _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
     _addListeners();
-    await _engine.enableVideo();
-    await _engine.startPreview();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    await _engine.enableAudioVolumeIndication(250, 10, true);
+    await _engine.setDefaultAudioRouteToSpeakerphone(true);
+    await _engine.enableVideo();
+    await _engine.enableAudio();
+    await _engine.startPreview();
+
     if (widget.isBroadCaster) {
       _engine.setClientRole(ClientRole.Broadcaster);
     } else {
@@ -109,15 +84,12 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   }
 
   void _addListeners() {
-    print("userJoined");
     _engine.setEventHandler(
-      RtcEngineEventHandler(
-          joinChannelSuccess: (channel, uid, elapsed) {
+      RtcEngineEventHandler(joinChannelSuccess: (channel, uid, elapsed) {
         debugPrint("joinChannelSuccess$channel,$uid,$elapsed");
       }, userJoined: (uid, elapsed) {
         debugPrint("userJoined$elapsed,$uid,");
         setState(() {
-          print("here");
           remoteUid.add(uid);
         });
       }, userOffline: (uid, reason) {
@@ -153,8 +125,8 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
   }
 
   _renderVideo() {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
+    return Container(
+      height: double.infinity,
       child:
           "${authController.currentUser.value!.uid}${authController.currentUser.value!.username}" ==
                   widget.channelId
@@ -162,11 +134,12 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
                   zOrderMediaOverlay: true,
                   zOrderOnTop: true,
                 )
-              : RtcRemoteView.TextureView(
+              : remoteUid.isNotEmpty
+                  ? RtcRemoteView.SurfaceView(
                       channelId: widget.channelId,
                       uid: remoteUid[0],
                     )
-                 ,
+                  : Container(),
     );
   }
 
@@ -184,4 +157,88 @@ class _BroadCastScreenState extends State<BroadCastScreen> {
     });
     await _engine.muteLocalAudioStream(isMuted);
   }
+
+
+  Widget _toolbar() {
+    return widget.isBroadCaster
+        ? Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(vertical: 48),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: RawMaterialButton(
+              onPressed: _muteMic,
+              child: Icon(
+                isMuted ? Icons.mic_off : Icons.mic,
+                color: isMuted ? Colors.white : Colors.blueAccent,
+                size: 20.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: isMuted ? Colors.blueAccent : Colors.white,
+              padding: const EdgeInsets.all(12.0),
+            ),
+          ),
+          Expanded(child: RawMaterialButton(
+            onPressed: () => _leaveChamnnel(),
+            child: Icon(
+              Icons.call_end,
+              color: Colors.white,
+              size: 35.0,
+            ),
+            shape: CircleBorder(),
+            elevation: 2.0,
+            fillColor: Colors.redAccent,
+            padding: const EdgeInsets.all(15.0),
+          )),
+          Expanded(child: RawMaterialButton(
+            onPressed: _switchCamera,
+            child: Icon(
+              Icons.switch_camera,
+              color: Colors.blueAccent,
+              size: 20.0,
+            ),
+            shape: CircleBorder(),
+            elevation: 2.0,
+            fillColor: Colors.white,
+            padding: const EdgeInsets.all(12.0),
+          )),
+         Expanded(child:  RawMaterialButton(
+           onPressed: (){},
+           child: Icon(
+             Icons.message_rounded,
+             color: Colors.blueAccent,
+             size: 20.0,
+           ),
+           shape: CircleBorder(),
+           elevation: 2.0,
+           fillColor: Colors.white,
+           padding: const EdgeInsets.all(12.0),
+         )),
+        ],
+      ),
+    ) : Container(
+      alignment: Alignment.bottomCenter,
+      padding: EdgeInsets.only(bottom: 48),
+      child: RawMaterialButton(
+        onPressed: (){},
+        child: Icon(
+          Icons.message_rounded,
+          color: Colors.blueAccent,
+          size: 20.0,
+        ),
+        shape: CircleBorder(),
+        elevation: 2.0,
+        fillColor: Colors.white,
+        padding: const EdgeInsets.all(12.0),
+      ),
+    );
+  }
+
+
+
+
+
 }
